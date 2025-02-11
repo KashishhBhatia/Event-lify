@@ -37,7 +37,10 @@ export default function EventCard({ event }) {
   return (
     <Card
       sx={{
-        width: { xs: '100%', sm: 345 }, // Responsive width: full width on small screens, fixed 345px on larger screens
+        // Fixed card dimensions: all cards will have the same size.
+        // For extra-small devices (phones), the card is set to 300px wide,
+        // and on small devices and above, it is set to 345px wide.
+        width: { xs: 300, sm: 345 },
         height: 550,
         display: 'flex',
         flexDirection: 'column',
@@ -50,12 +53,13 @@ export default function EventCard({ event }) {
         },
       }}
     >
+      {/* Image container */}
       <CardMedia
         component="img"
         sx={{
-          height: 220,
+          height: 220,             // Fixed height for the image container
           width: '100%',
-          objectFit: 'cover',
+          objectFit: 'cover',       // Ensures the image covers the container without affecting card size
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
         }}
@@ -161,3 +165,4 @@ export default function EventCard({ event }) {
     </Card>
   );
 }
+
