@@ -21,6 +21,7 @@ export const signup = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
+      expires: 7d,
     });
 
     // Create token and store cookie
