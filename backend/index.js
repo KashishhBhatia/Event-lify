@@ -16,6 +16,11 @@ const app = express();
 const port=process.env.PORT || 3000;
 const httpServer = createServer(app);
 
+app.use(cors({
+  origin: 'https://eventlify.onrender.com',
+  credentials: true,
+}));
+
 const io = new Server(httpServer, {
   cors: {
     origin: "https://eventlify.onrender.com",
@@ -76,10 +81,7 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use(cors({
-  origin: 'https://eventlify.onrender.com',
-  credentials: true,
-}));
+
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.static('public'));
