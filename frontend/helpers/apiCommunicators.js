@@ -4,7 +4,7 @@ import axios from "axios";
 export const signupUser = async (name, email, password) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/users/signup",
+      "https://event-lify-backend.onrender.com/api/users/signup",
       { name, email, password },
       { withCredentials: true }
     );
@@ -18,7 +18,7 @@ export const signupUser = async (name, email, password) => {
 export const loginUser = async (email, password) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/users/login",
+      "https://event-lify-backend.onrender.com/api/users/login",
       { email, password },
       { withCredentials: true }
     );
@@ -32,7 +32,7 @@ export const loginUser = async (email, password) => {
 export const logoutUser = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/users/logout",
+      "https://event-lify-backend.onrender.com/api/users/logout",
       {},
       { withCredentials: true }
     );
