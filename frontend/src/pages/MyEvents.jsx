@@ -34,7 +34,7 @@ const MyEvents = () => {
       const fetchRegisteredEvents = async () => {
         setRegisteredLoading(true);
         try {
-          const response = await axios.get('http://localhost:3000/api/users/eventsRegistered', {
+          const response = await axios.get('https://event-lify-backend.onrender.com/api/users/eventsRegistered', {
             withCredentials: true,
           });
           if (response.data.message === 'OK') {
