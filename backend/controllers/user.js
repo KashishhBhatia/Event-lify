@@ -38,12 +38,12 @@ export const signup = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000 ,
+      expires: expires, // Correctly set the expiration date
     });
 
     return res
       .status(201)
-      .json({ message: "OK", name: user.name, email: user.email,_id: user._id  });
+      .json({ message: "OK", name: user.name, email: user.email, _id: user._id });
   } catch (error) {
     console.log(error);
     return res
@@ -91,12 +91,12 @@ export const login = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000 ,
+      expires: expires, // Correctly set the expiration date
     });
 
     return res
       .status(200)
-      .json({ message: "OK", name: user.name, email: user.email,_id: user._id  });
+      .json({ message: "OK", name: user.name, email: user.email, _id: user._id });
   } catch (error) {
     console.log(error);
     return res
@@ -119,7 +119,7 @@ export const verifyUser = async (req, res) => {
     }
     return res
       .status(200)
-      .json({ message: "OK", name: user.name, email: user.email,_id: user._id });
+      .json({ message: "OK", name: user.name, email: user.email, _id: user._id });
   } catch (error) {
     console.log(error);
     return res
@@ -179,13 +179,14 @@ export const getEventsRegistered = async (req, res) => {
     return res
       .status(200)
       .json({ message: "OK", events: user.events_registered });
-    } catch (error) {
+  } catch (error) {
     console.log(error);
     return res
       .status(200)
       .json({ message: "ERROR", cause: error.message });
-    }
-}
+  }
+};
+
 export const getEventsCreated = async (req, res) => {
   try {
     // Verify user existence before fetching created events
@@ -202,10 +203,10 @@ export const getEventsCreated = async (req, res) => {
     return res
       .status(200)
       .json({ message: "OK", events: user.events_created });
-    } catch (error) {
+  } catch (error) {
     console.log(error);
     return res
       .status(200)
       .json({ message: "ERROR", cause: error.message });
-    }
-}
+  }
+};
