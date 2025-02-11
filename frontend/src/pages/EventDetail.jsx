@@ -24,7 +24,7 @@ export default function EventDetails() {
   const fetchEventDetails = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/event/${id}`, {
+      const response = await axios.get(`https://event-lify-backend.onrender.com/api/event/${id}`, {
         withCredentials: true,
       });
       setEvent(response.data.event);
