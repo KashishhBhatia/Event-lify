@@ -42,7 +42,7 @@ export default function CreateEvent() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/event/create",
+        "https://event-lify-backend.onrender.com/api/event/create",
         data,
         {
           headers: {
