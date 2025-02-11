@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
     // Always verify with the backend.
     const verifyUser = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/user/auth-status', {
+        const res = await axios.get('https://event-lify-backend.onrender.com/api/user/auth-status', {
           withCredentials: true,
         });
         if (res.data.message === "OK") {
