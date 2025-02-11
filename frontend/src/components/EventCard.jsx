@@ -9,7 +9,6 @@ import socket from '../socket';
 
 export default function EventCard({ event }) {
   const [liveCount, setLiveCount] = useState(event.liveCount || 0);
-  console.log(event.coverimage)
 
   const eventDateTime = dayjs(event.date)
     .hour(parseInt(event.time.split(':')[0], 10))
@@ -18,7 +17,6 @@ export default function EventCard({ event }) {
 
   useEffect(() => {
     if (isLive) {
-      // Subscribe for current live attendance without joining.
       socket.emit("subscribeAttendance", event._id, (data) => {
         if (data && data.eventId === event._id) {
           setLiveCount(data.attendance);
@@ -39,8 +37,8 @@ export default function EventCard({ event }) {
   return (
     <Card
       sx={{
-        maxWidth: { xs: '100%', sm: 345 },
-        minHeight: { xs: 'auto', sm: 500 },
+        width: 345,
+        height: 500,
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 2,
@@ -55,7 +53,8 @@ export default function EventCard({ event }) {
       <CardMedia
         component="img"
         sx={{
-          height: { xs: 200, sm: 220 },
+          height: 220,
+          width: '100%',
           objectFit: 'cover',
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
@@ -68,9 +67,9 @@ export default function EventCard({ event }) {
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: { xs: 1.5, sm: 1 },
-          p: { xs: 1.5, sm: 2 },
-          minHeight: 180,
+          gap: 1,
+          p: 2,
+          overflow: 'hidden',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
@@ -162,3 +161,4 @@ export default function EventCard({ event }) {
     </Card>
   );
 }
+
