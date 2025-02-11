@@ -25,7 +25,7 @@ export const signup = async (req, res) => {
     // Clear any existing cookie and set the new one
     res.clearCookie(COOKIE_NAME, {
       httpOnly: true,
-      domain: "eventlify.onrender.com",
+      domain: ".onrender.com",
       signed: true,
       secure: true,
       path: "/",
@@ -33,7 +33,7 @@ export const signup = async (req, res) => {
     });
     res.cookie(COOKIE_NAME, token, {
       httpOnly: true,
-      domain: "eventlify.onrender.com",
+      domain: ".onrender.com",
       signed: true,
       secure: true,
       path: "/",
@@ -78,7 +78,7 @@ export const login = async (req, res) => {
     // Clear any existing cookie and set the new one
     res.clearCookie(COOKIE_NAME, {
       httpOnly: true,
-      domain: "eventlify.onrender.com",
+      domain: ".onrender.com",
       signed: true,
       secure: true,
       path: "/",
@@ -86,7 +86,7 @@ export const login = async (req, res) => {
     });
     res.cookie(COOKIE_NAME, token, {
       httpOnly: true,
-      domain: "eventlify.onrender.com",
+      domain: ".onrender.com",
       signed: true,
       secure: true,
       path: "/",
@@ -144,7 +144,7 @@ export const userLogout = async (req, res) => {
     // Clear the authentication cookie with the same options as used during login/signup
     res.clearCookie(COOKIE_NAME, {
       httpOnly: true,
-      domain: "eventlify.onrender.com",
+      domain: ".onrender.com",
       signed: true,
       secure: true,
       path: "/",
