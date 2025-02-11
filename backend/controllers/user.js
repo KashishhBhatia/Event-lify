@@ -1,6 +1,3 @@
-The recent changes to your `user.js` file include correctly setting the `expires` attribute for the cookies. Here is the updated `user.js` file:
-
-```javascript
 import User from '../model/user.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
