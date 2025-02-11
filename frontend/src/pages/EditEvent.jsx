@@ -28,7 +28,7 @@ export default function EditEvent() {
     // Fetch the event details using GET /api/event/:id
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/event/${id}`, {
+        const response = await axios.get(`https://event-lify-backend.onrender.com/api/event/${id}`, {
           withCredentials: true,
         });
         if (response.data.message === "OK") {
@@ -82,7 +82,7 @@ export default function EditEvent() {
     try {
       // Send a PATCH request to update the event.
       const response = await axios.patch(
-        `http://localhost:3000/api/event/${id}`,
+        `https://event-lify-backend.onrender.com/api/event/${id}`,
         formData,
         { withCredentials: true }
       );
