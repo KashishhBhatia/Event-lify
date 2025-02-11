@@ -37,7 +37,7 @@ export default function EventCard({ event }) {
   return (
     <Card
       sx={{
-        width: 345,
+        width: { xs: '100%', sm: 345 }, // Responsive width: full width on small screens, fixed 345px on larger screens
         height: 550,
         display: 'flex',
         flexDirection: 'column',
@@ -59,7 +59,7 @@ export default function EventCard({ event }) {
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
         }}
-        image={ event.coverimage || '/heavy-encaustic-paint-background.jpg' }
+        image={event.coverimage || '/heavy-encaustic-paint-background.jpg'}
         alt={event.title}
       />
       <CardContent
@@ -161,4 +161,3 @@ export default function EventCard({ event }) {
     </Card>
   );
 }
-
