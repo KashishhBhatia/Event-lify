@@ -13,6 +13,7 @@ import Event from "./model/event.model.js"; // Import the Event model
 
 dotenv.config();
 const app = express();
+const port=process.env.PORT || 3000;
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
@@ -98,5 +99,5 @@ app.use('/api/users', userRoutes);
 app.use('/api/event', eventRoutes);
 
 httpServer.listen(3000, () => {
-  console.log('listening on *:3000');
+  console.log('listening on ${port}`);
 });
