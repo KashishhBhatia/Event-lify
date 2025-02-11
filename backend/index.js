@@ -99,5 +99,5 @@ app.use('/api/users', userRoutes);
 app.use('/api/event', eventRoutes);
 
 httpServer.listen(3000, () => {
-  console.log('listening on ${port}`);
+  console.log(`listening on ${port}`);
 });
