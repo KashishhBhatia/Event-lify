@@ -21,7 +21,6 @@ export const signup = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
-      expires: 7d,
     });
 
     // Create token and store cookie
@@ -39,6 +38,7 @@ export const signup = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000 ,
     });
 
     return res
@@ -91,6 +91,7 @@ export const login = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000 ,
     });
 
     return res
