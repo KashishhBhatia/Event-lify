@@ -38,7 +38,7 @@ export default function EventCard({ event }) {
     <Card
       sx={{
         width: 345,
-        height: 500,
+        height: 550,
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 2,
