@@ -13,16 +13,6 @@ export const signup = async (req, res) => {
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
-    // Clear any existing cookie
-    res.clearCookie(COOKIE_NAME, {
-      httpOnly: true,
-      domain: "eventlify.onrender.com",
-      signed: true,
-      secure: true,
-      path: "/",
-      sameSite: "none",
-    });
-
     // Create token and store cookie
     const token = jwt.sign(
       { id: user._id.toString(), email: user.email },
@@ -31,6 +21,16 @@ export const signup = async (req, res) => {
     );
     const expires = new Date();
     expires.setDate(expires.getDate() + 7);
+
+    // Clear any existing cookie and set the new one
+    res.clearCookie(COOKIE_NAME, {
+      httpOnly: true,
+      domain: "eventlify.onrender.com",
+      signed: true,
+      secure: true,
+      path: "/",
+      sameSite: "none",
+    });
     res.cookie(COOKIE_NAME, token, {
       httpOnly: true,
       domain: "eventlify.onrender.com",
@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
-      expires: expires, // Correctly set the expiration date
+      expires: expires,
     });
 
     return res
@@ -47,7 +47,7 @@ export const signup = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(200)
+      .status(500)
       .json({ message: "ERROR", cause: error.message });
   }
 };
@@ -66,16 +66,6 @@ export const login = async (req, res) => {
       return res.status(403).send("Incorrect Password");
     }
 
-    // Clear any existing cookie
-    res.clearCookie(COOKIE_NAME, {
-      httpOnly: true,
-      domain: "eventlify.onrender.com",
-      signed: true,
-      secure: true,
-      path: "/",
-      sameSite: "none",
-    });
-
     // Create token and store cookie
     const token = jwt.sign(
       { id: user._id.toString(), email: user.email },
@@ -84,6 +74,16 @@ export const login = async (req, res) => {
     );
     const expires = new Date();
     expires.setDate(expires.getDate() + 7);
+
+    // Clear any existing cookie and set the new one
+    res.clearCookie(COOKIE_NAME, {
+      httpOnly: true,
+      domain: "eventlify.onrender.com",
+      signed: true,
+      secure: true,
+      path: "/",
+      sameSite: "none",
+    });
     res.cookie(COOKIE_NAME, token, {
       httpOnly: true,
       domain: "eventlify.onrender.com",
@@ -91,7 +91,7 @@ export const login = async (req, res) => {
       secure: true,
       path: "/",
       sameSite: "none",
-      expires: expires, // Correctly set the expiration date
+      expires: expires,
     });
 
     return res
@@ -100,7 +100,7 @@ export const login = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(200)
+      .status(500)
       .json({ message: "ERROR", cause: error.message });
   }
 };
@@ -123,7 +123,7 @@ export const verifyUser = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(200)
+      .status(500)
       .json({ message: "ERROR", cause: error.message });
   }
 };
@@ -132,7 +132,6 @@ export const userLogout = async (req, res) => {
   try {
     // Verify user existence before logging out
     const user = await User.findById(res.locals.jwtData.id);
-    console.log(user);
     if (!user) {
       return res
         .status(401)
@@ -158,7 +157,7 @@ export const userLogout = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(200)
+      .status(500)
       .json({ message: "ERROR", cause: error.message });
   }
 };
@@ -182,7 +181,7 @@ export const getEventsRegistered = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(200)
+      .status(500)
       .json({ message: "ERROR", cause: error.message });
   }
 };
@@ -206,7 +205,7 @@ export const getEventsCreated = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res
-      .status(200)
+      .status(500)
       .json({ message: "ERROR", cause: error.message });
   }
 };
