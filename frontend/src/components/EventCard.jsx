@@ -40,19 +40,17 @@ export default function EventCard({ event }) {
         // Fixed card dimensions: all cards will have the same size.
         // For extra-small devices (phones), the card is set to 300px wide,
         // and on small devices and above, it is set to 345px wide.
-        width: { xs:220, sm: 345 },
-        '@media (max-width: 320px)': {
-      width: 220, // Adjust for very small screens
-    },
-        height: 550,
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: 2,
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        '&:hover': {
-          transform: 'translateY(-8px)',
-          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.2)',
+        width: { xs: '95%', sm: 345 }, // On xs, card fills 95% of its container; on sm+, fixed at 345px
+    maxWidth: 345,
+    height: 550,
+    display: 'flex',
+    flexDirection: 'column',
+    borderRadius: 2,
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    '&:hover': {
+      transform: 'translateY(-8px)',
+      boxShadow: '0 8px 20px rgba(0, 0, 0, 0.2)',
         },
       }}
     >
