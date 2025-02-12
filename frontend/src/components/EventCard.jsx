@@ -40,7 +40,7 @@ export default function EventCard({ event }) {
         // Fixed card dimensions: all cards will have the same size.
         // For extra-small devices (phones), the card is set to 300px wide,
         // and on small devices and above, it is set to 345px wide.
-        width: { xs: '98%', sm: 345 }, // On xs, card fills 95% of its container; on sm+, fixed at 345px
+        minWidth: { xs: '98%', sm: 345 }, // On xs, card fills 95% of its container; on sm+, fixed at 345px
     maxWidth: 345,
     height: 550,
     display: 'flex',
