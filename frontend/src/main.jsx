@@ -5,7 +5,7 @@ import { AuthProvider } from "./context/AuthProvider.jsx";
 import App from './App.jsx';
 import axios from "axios";
 
-axios.defaults.baseURL = import.meta.env.BACKEND_URL ;
+axios.defaults.baseURL = mport.meta.env.BACKENDURL ;
 axios.defaults.withCredentials = true;
 
 createRoot(document.getElementById('root')).render(
