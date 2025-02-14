@@ -7,7 +7,11 @@ import { useAuth } from '../context/AuthProvider';
 import dayjs from 'dayjs';
 import socket from '../socket';
 import Navbar from '../components/Navbar';
-import {getEventDetailsAPI} from '../../helpers/apiCommunicators'
+import {
+  getEventDetailsAPI,
+  registerForEvent,
+  deregisterFromEvent,
+} from '../../helpers/apiCommunicators';
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -24,16 +28,14 @@ export default function EventDetails() {
 
   const fetchEventDetails = async () => {
     setLoading(true);
-    try {
-      const { event, liveCount } = await getEventDetailsAPI(id);
-      setEvent(event);
-      setLiveCount(liveCount);
-    } catch (err) {
-      console.error('Error fetching event details:', err);
-      setError('Failed to load event. Please try again later.');
-    } finally {
-      setLoading(false);
+    const result = await getEventDetailsAPI(id);
+    if (result.error) {
+      setError(result.error);
+    } else {
+      setEvent(result.event);
+      setLiveCount(result.liveCount);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -109,21 +111,15 @@ export default function EventDetails() {
     }
     setRegisterLoading(true);
     setRegisterError(null);
-    try {
-      const response = await axios.put(`https://event-lify-backend.onrender.com/api/event/${id}`, {}, {
-        withCredentials: true,
-      });
-      if (response.data.message === "OK") {
-        await fetchEventDetails();
-      } else {
-        setRegisterError(response.data.message);
-      }
-    } catch (err) {
-      console.error('Registration error:', err);
-      setRegisterError('Registration failed. Please try again.');
-    } finally {
-      setRegisterLoading(false);
+    const result = await registerForEvent(id);
+    if (result.error) {
+      setRegisterError(result.error);
+    } else if (result.message === "OK") {
+      await fetchEventDetails();
+    } else {
+      setRegisterError(result.message);
     }
+    setRegisterLoading(false);
   };
 
   const handleDeregister = async () => {
@@ -133,21 +129,15 @@ export default function EventDetails() {
     }
     setRegisterLoading(true);
     setRegisterError(null);
-    try {
-      const response = await axios.delete(`https://event-lify-backend.onrender.com/api/event/${id}/unregister`, {
-        withCredentials: true,
-      });
-      if (response.data.message === "OK") {
-        await fetchEventDetails();
-      } else {
-        setRegisterError(response.data.message);
-      }
-    } catch (err) {
-      console.error('Deregistration error:', err);
-      setRegisterError('Deregistration failed. Please try again.');
-    } finally {
-      setRegisterLoading(false);
+    const result = await deregisterFromEvent(id);
+    if (result.error) {
+      setRegisterError(result.error);
+    } else if (result.message === "OK") {
+      await fetchEventDetails();
+    } else {
+      setRegisterError(result.message);
     }
+    setRegisterLoading(false);
   };
 
   if (loading) {
@@ -177,122 +167,123 @@ export default function EventDetails() {
 
   return (
     <>
-    <Navbar/>
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Box
-        sx={{
-          width: '100%',
-          height: { xs: 200, md: 300 },
-          backgroundImage: `url(${ event.coverimage ||'/esse-chua-cdiIVIJkYc4-unsplash.jpg' ||  event.image })`,
-          backgroundSize: 'fit',
-          backgroundPosition: 'center',
-          borderRadius: 2,
-          mb: 4,
-        }}
-      />
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-          {event.title}
-        </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          {event.date} at {event.time}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          Category: {event.category}
-        </Typography>
-        {isLiveEvent && (
-          <Typography variant="body2" color="success.main">
-            Live Users: {liveCount}
+      <Navbar />
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Box
+          sx={{
+            width: '100%',
+            height: { xs: 200, md: 300 },
+            backgroundImage: `url(${event.coverimage || '/esse-chua-cdiIVIJkYc4-unsplash.jpg' || event.image})`,
+            backgroundSize: 'fit',
+            backgroundPosition: 'center',
+            borderRadius: 2,
+            mb: 4,
+          }}
+        />
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+            {event.title}
           </Typography>
-        )}
-      </Box>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="body1" paragraph>
-          {event.description}
-        </Typography>
-        <Typography variant="body2">
-          <strong>Location:</strong> {event.location}
-        </Typography>
-      </Box>
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        {isPastEvent ? (
-          <Typography variant="h6" color="text.secondary">
-            This event has passed.
+          <Typography variant="subtitle1" gutterBottom>
+            {event.date} at {event.time}
           </Typography>
-        ) : isCreator ? (
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={() => navigate(`/events/${id}/edit`)}
-            sx={{
-              mt: 'auto',
-              backgroundColor: '#1976d2',
-              '&:hover': { backgroundColor: '#1565c0' },
-              textTransform: 'none',
-              px: 4,
-              py: 1.5,
-            }}
-          >
-            Manage Event
-          </Button>
-        ) : isLiveEvent ? (
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={() => navigate(`/events/${id}/live`)}
-            sx={{
-              mt: 'auto',
-              backgroundColor: '#2e7d32',
-              '&:hover': { backgroundColor: '#1b5e20' },
-              textTransform: 'none',
-              px: 4,
-              py: 1.5,
-            }}
-          >
-            Join Live
-          </Button>
-        ) : isRegistered ? (
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleDeregister}
-            disabled={registerLoading}
-            sx={{
-              mt: 'auto',
-              backgroundColor: '#c53030',
-              '&:hover': { backgroundColor: '#9b1c1c' },
-              textTransform: 'none',
-              px: 4,
-              py: 1.5,
-            }}
-          >
-            {registerLoading ? 'Processing...' : 'Unregister from Event'}
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleRegister}
-            disabled={registerLoading}
-            sx={{
-              mt: 'auto',
-              backgroundColor: '#c53030',
-              '&:hover': { backgroundColor: '#9b1c1c' },
-              textTransform: 'none',
-              px: 4,
-              py: 1.5,
-            }}
-          >
-            {registerLoading ? 'Processing...' : 'Register for Event'}
-          </Button>
-        )}
-        {registerError && (
-          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-            {registerError}
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Category: {event.category}
           </Typography>
-        )}
-      </Box>
-    </Container>
+          {isLiveEvent && (
+            <Typography variant="body2" color="success.main">
+              Live Users: {liveCount}
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="body1" paragraph>
+            {event.description}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Location:</strong> {event.location}
+          </Typography>
+        </Box>
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          {isPastEvent ? (
+            <Typography variant="h6" color="text.secondary">
+              This event has passed.
+            </Typography>
+          ) : isCreator ? (
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => navigate(`/events/${id}/edit`)}
+              sx={{
+                mt: 'auto',
+                backgroundColor: '#1976d2',
+                '&:hover': { backgroundColor: '#1565c0' },
+                textTransform: 'none',
+                px: 4,
+                py: 1.5,
+              }}
+            >
+              Manage Event
+            </Button>
+          ) : isLiveEvent ? (
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => navigate(`/events/${id}/live`)}
+              sx={{
+                mt: 'auto',
+                backgroundColor: '#2e7d32',
+                '&:hover': { backgroundColor: '#1b5e20' },
+                textTransform: 'none',
+                px: 4,
+                py: 1.5,
+              }}
+            >
+              Join Live
+            </Button>
+          ) : isRegistered ? (
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleDeregister}
+              disabled={registerLoading}
+              sx={{
+                mt: 'auto',
+                backgroundColor: '#c53030',
+                '&:hover': { backgroundColor: '#9b1c1c' },
+                textTransform: 'none',
+                px: 4,
+                py: 1.5,
+              }}
+            >
+              {registerLoading ? 'Processing...' : 'Unregister from Event'}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleRegister}
+              disabled={registerLoading}
+              sx={{
+                mt: 'auto',
+                backgroundColor: '#c53030',
+                '&:hover': { backgroundColor: '#9b1c1c' },
+                textTransform: 'none',
+                px: 4,
+                py: 1.5,
+              }}
+            >
+              {registerLoading ? 'Processing...' : 'Register for Event'}
+            </Button>
+          )}
+          {registerError && (
+            <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+              {registerError}
+            </Typography>
+          )}
+        </Box>
+      </Container>
     </>
   );
 }
+
