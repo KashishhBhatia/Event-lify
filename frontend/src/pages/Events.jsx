@@ -6,6 +6,7 @@ import { Search } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import {getAllEvents} from '../../helpers/apiCommunicators'
 
 export default function Events() {
   const [searchTerm, setSearchTerm] = useState('');
