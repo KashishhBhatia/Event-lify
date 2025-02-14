@@ -42,3 +42,13 @@ export const logoutUser = async () => {
     return { error: error.response?.data?.message || "Logout failed" };
   }
 };
+
+export const getEventDetailsAPI = async (id) => {
+  const response = await axios.get(`/api/event/${id}`, {
+    withCredentials: true, // include cookies if needed
+  });
+  return {
+    event: response.data.event,
+    liveCount: response.data.event.liveCount || 0,
+  };
+};
