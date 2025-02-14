@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import { useAuth } from '../context/AuthProvider';
 import Navbar from '../components/Navbar';
+import {getRegisteredEvents} from '../../helpers/apiCommunicators';
 
 const MyEvents = () => {
   const [searchTerm, setSearchTerm] = useState('');
