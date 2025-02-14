@@ -17,13 +17,13 @@ const port=process.env.PORT || 3000;
 const httpServer = createServer(app);
 
 app.use(cors({
-  origin: 'https://eventlify.onrender.com',
+  origin: ['https://eventlify.onrender.com', 'http://localhost:5173'],
   credentials: true,
 }));
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://eventlify.onrender.com",
+    origin: ['https://eventlify.onrender.com', 'http://localhost:5173'],
     methods: ["GET", "POST"],
     credentials: true,
   }
