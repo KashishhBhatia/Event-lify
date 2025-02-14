@@ -1,10 +1,14 @@
 // src/pages/EditEvent.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import dayjs from "dayjs";
 import { useAuth } from "../context/AuthProvider";
 import Navbar from "../components/Navbar";
+import {
+  getEventDetailsAPI,
+  updateEvent,
+  deleteEvent,
+} from "../../helpers/apiCommunicators";
 
 export default function EditEvent() {
   const { id } = useParams();
@@ -25,45 +29,37 @@ export default function EditEvent() {
   const categories = ["Technology", "Music", "Sports", "Art", "Food"];
 
   useEffect(() => {
-    // Fetch the event details using GET /api/event/:id
+    // Fetch the event details using the helper function.
     const fetchEvent = async () => {
-      try {
-        const response = await axios.get(`https://event-lify-backend.onrender.com/api/event/${id}`, {
-          withCredentials: true,
-        });
-        if (response.data.message === "OK") {
-          const event = response.data.event;
-          // Check if the current user is the creator
-          if (
-            !authUser ||
-            !event.creator ||
-            String(event.creator) !== String(authUser._id)
-          ) {
-            // Not authorized: redirect to /my-events (or display an error message)
-            navigate(`/events/${id}`, { replace: true });
-            return;
-          }
-          // Pre-fill the form with event data.
-          setFormData({
-            title: event.title || "",
-            description: event.description || "",
-            date: event.date ? dayjs(event.date).format("YYYY-MM-DD") : "",
-            time: event.time || "",
-            location: event.location || "",
-            category: event.category || "",
-          });
-        } else {
-          setError("Event not found.");
+      const result = await getEventDetailsAPI(id);
+      if (result.error) {
+        setError(result.error);
+        setLoading(false);
+      } else {
+        const event = result.event;
+        // Verify that the current user is the creator.
+        if (
+          !authUser ||
+          !event.creator ||
+          String(event.creator) !== String(authUser._id)
+        ) {
+          // Not authorized: redirect to event details page.
+          navigate(`/events/${id}`, { replace: true });
+          return;
         }
-      } catch (err) {
-        console.error("Error fetching event:", err);
-        setError("Error fetching event data.");
-      } finally {
+        // Pre-fill the form with event data.
+        setFormData({
+          title: event.title || "",
+          description: event.description || "",
+          date: event.date ? dayjs(event.date).format("YYYY-MM-DD") : "",
+          time: event.time || "",
+          location: event.location || "",
+          category: event.category || "",
+        });
         setLoading(false);
       }
     };
 
-    // Only fetch if authUser is available.
     if (authUser) {
       fetchEvent();
     }
@@ -79,21 +75,25 @@ export default function EditEvent() {
       return;
     }
 
-    try {
-      // Send a PATCH request to update the event.
-      const response = await axios.patch(
-        `https://event-lify-backend.onrender.com/api/event/${id}`,
-        formData,
-        { withCredentials: true }
-      );
-      console.log("Event updated:", response.data);
+    const result = await updateEvent(id, formData);
+    if (result.error) {
+      setError(result.error);
+    } else {
+      console.log("Event updated:", result);
       navigate("/my-events", { replace: true });
-    } catch (error) {
-      console.error(
-        "Error updating event:",
-        error.response ? error.response.data : error.message
-      );
-      setError("Error updating event. Please try again.");
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this event?");
+    if (!confirmDelete) return;
+
+    const result = await deleteEvent(id);
+    if (result.error) {
+      setError(result.error);
+    } else {
+      console.log("Event deleted:", result);
+      navigate("/my-events", { replace: true });
     }
   };
 
@@ -115,133 +115,140 @@ export default function EditEvent() {
 
   return (
     <>
-    <Navbar/>
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Event</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Event Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Event Title
-              </label>
-              <input
-                type="text"
-                required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <textarea
-                required
-                rows={4}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
-            </div>
-
-            {/* Date and Time */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Navbar />
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Event</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Event Title */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Date
+                  Event Title
                 </label>
                 <input
-                  type="date"
+                  type="text"
                   required
-                  min={dayjs().format("YYYY-MM-DD")}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
-                  value={formData.date}
+                  value={formData.title}
                   onChange={(e) =>
-                    setFormData({ ...formData, date: e.target.value })
+                    setFormData({ ...formData, title: e.target.value })
                   }
                 />
               </div>
+
+              {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Time
+                  Description
                 </label>
-                <input
-                  type="time"
+                <textarea
                   required
-                  min={
-                    formData.date === dayjs().format("YYYY-MM-DD")
-                      ? dayjs().format("HH:mm")
-                      : undefined
-                  }
+                  rows={4}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
-                  value={formData.time}
+                  value={formData.description}
                   onChange={(e) =>
-                    setFormData({ ...formData, time: e.target.value })
+                    setFormData({ ...formData, description: e.target.value })
                   }
                 />
               </div>
-            </div>
 
-            {/* Location */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Location
-              </label>
-              <input
-                type="text"
-                required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
-                value={formData.location}
-                onChange={(e) =>
-                  setFormData({ ...formData, location: e.target.value })
-                }
-              />
-            </div>
+              {/* Date and Time */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    min={dayjs().format("YYYY-MM-DD")}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
+                    value={formData.date}
+                    onChange={(e) =>
+                      setFormData({ ...formData, date: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Time
+                  </label>
+                  <input
+                    type="time"
+                    required
+                    min={
+                      formData.date === dayjs().format("YYYY-MM-DD")
+                        ? dayjs().format("HH:mm")
+                        : undefined
+                    }
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
+                    value={formData.time}
+                    onChange={(e) =>
+                      setFormData({ ...formData, time: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
 
-            {/* Category */}
-            <div className="grid grid-cols-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Category
-              </label>
-              <select
-                required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {/* Location */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  required
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
+                  value={formData.location}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
+                />
+              </div>
 
-            {/* Submit Button */}
-            <div className="flex justify-center mt-8">
-              <button
-                type="submit"
-                className="bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-              >
-                Update Event
-              </button>
-            </div>
-          </form>
+              {/* Category */}
+              <div className="grid grid-cols-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Category
+                </label>
+                <select
+                  required
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-primary focus:border-primary"
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex justify-center mt-8 space-x-4">
+                <button
+                  type="submit"
+                  className="bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                >
+                  Update Event
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                >
+                  Delete Event
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
