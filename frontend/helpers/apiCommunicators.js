@@ -91,3 +91,28 @@ export const deregisterFromEvent = async (id) => {
   }
 };
 
+export const createEvent = async (data) => {
+  try {
+    const response = await axios.post(
+      "https://event-lify-backend.onrender.com/api/event/create",
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error creating event:",
+      error.response?.data || error.message
+    );
+    return {
+      error:
+        error.response?.data?.message || "Event creation failed. Please try again.",
+    };
+  }
+};
+
