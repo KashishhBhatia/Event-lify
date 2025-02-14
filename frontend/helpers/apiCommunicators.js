@@ -160,3 +160,16 @@ export const getRegisteredEvents = async () => {
   }
 };
 
+export const getAllEvents = async () => {
+  try {
+    const response = await axios.get(
+      "https://event-lify-backend.onrender.com/api/event",
+      { withCredentials: true }
+    );
+    // Assuming the backend responds with { events: [...] }
+    return { events: response.data.events };
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return { error: "Failed to fetch events. Please try again later." };
+  }
+};
