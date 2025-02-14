@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthProvider';
 import dayjs from 'dayjs';
 import socket from '../socket';
 import Navbar from '../components/Navbar';
+import getEventDetailsAPI from '../../helpers/apiCommunicators'
 
 export default function EventDetails() {
   const { id } = useParams();
