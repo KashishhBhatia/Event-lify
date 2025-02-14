@@ -29,25 +29,17 @@ const MyEvents = () => {
   };
 
   // Fetch registered events for the authenticated user
-  useEffect(() => {
+    useEffect(() => {
     if (authUser) {
       const fetchRegisteredEvents = async () => {
         setRegisteredLoading(true);
-        try {
-          const response = await axios.get('https://event-lify-backend.onrender.com/api/users/eventsRegistered', {
-            withCredentials: true,
-          });
-          if (response.data.message === 'OK') {
-            setRegisteredEvents(response.data.events);
-          } else {
-            setRegisteredError('Failed to fetch registered events.');
-          }
-        } catch (error) {
-          console.error('Error fetching registered events:', error);
-          setRegisteredError('Error fetching registered events.');
-        } finally {
-          setRegisteredLoading(false);
+        const result = await getRegisteredEvents();
+        if (result.error) {
+          setRegisteredError(result.error);
+        } else {
+          setRegisteredEvents(result.events);
         }
+        setRegisteredLoading(false);
       };
       fetchRegisteredEvents();
     }
