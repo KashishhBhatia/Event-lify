@@ -24,9 +24,9 @@ export default function EventDetails() {
   const fetchEventDetails = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/event/${id}`);
-      setEvent(response.data.event);
-      setLiveCount(response.data.event.liveCount || 0);
+      const { event, liveCount } = await getEventDetailsAPI(id);
+      setEvent(event);
+      setLiveCount(liveCount);
     } catch (err) {
       console.error('Error fetching event details:', err);
       setError('Failed to load event. Please try again later.');
