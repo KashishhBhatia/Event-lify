@@ -19,16 +19,13 @@ export default function Events() {
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
-      try {
-        const response = await axios.get('https://event-lify-backend.onrender.com/api/event', { withCredentials: true });
-        // Assuming the backend responds with { events: [...] }
-        setAllEvents(response.data.events);
-      } catch (err) {
-        console.error('Error fetching events:', err);
-        setError('Failed to fetch events. Please try again later.');
-      } finally {
-        setLoading(false);
+      const result = await getAllEvents();
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setAllEvents(result.events);
       }
+      setLoading(false);
     };
     fetchEvents();
   }, []);
