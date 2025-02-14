@@ -1,8 +1,9 @@
+// src/pages/CreateEvent.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import dayjs from "dayjs";
 import Navbar from "../components/Navbar";
+import { createEvent } from "../../helpers/apiCommunicators";
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -13,8 +14,10 @@ export default function CreateEvent() {
     time: "",
     location: "",
     category: "",
-    image: null, // New field for file upload
+    image: null, // For file upload
   });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const categories = ["Technology", "Music", "Sports", "Art", "Food"];
 
@@ -40,24 +43,18 @@ export default function CreateEvent() {
       data.append("image", formData.image);
     }
 
-    try {
-      const response = await axios.post(
-        "https://event-lify-backend.onrender.com/api/event/create",
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("Event created:", response.data);
+    setLoading(true);
+    setError(null);
+
+    const result = await createEvent(data);
+
+    if (result.error) {
+      setError(result.error);
+    } else {
+      console.log("Event created:", result);
       navigate("/my-events");
-    } catch (error) {
-      console.error(
-        "Error creating event:",
-        error.response ? error.response.data : error.message
-      );
     }
+    setLoading(false);
   };
 
   return (
@@ -69,9 +66,14 @@ export default function CreateEvent() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Create New Event
             </h2>
+            {error && (
+              <p className="text-red-500 mb-4">
+                {error}
+              </p>
+            )}
             <form
               onSubmit={handleSubmit}
-              encType="multipart/form-data"  
+              encType="multipart/form-data"
               className="space-y-6"
             >
               {/* Event Title */}
@@ -203,8 +205,9 @@ export default function CreateEvent() {
                 <button
                   type="submit"
                   className="bg-red-700 text-white px-6 py-2 rounded-md hover:bg-red-600 hover:cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                  disabled={loading}
                 >
-                  Create Event
+                  {loading ? "Creating Event..." : "Create Event"}
                 </button>
               </div>
             </form>
