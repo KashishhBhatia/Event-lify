@@ -173,3 +173,25 @@ export const getAllEvents = async () => {
     return { error: "Failed to fetch events. Please try again later." };
   }
 };
+
+export const verifyUserAPI = async () => {
+  try {
+    const res = await axios.get(
+      "https://event-lify-backend.onrender.com/api/users/auth-status",
+      { withCredentials: true }
+    );
+    if (res.data.message === "OK") {
+      const userData = {
+        name: res.data.name,
+        email: res.data.email,
+        _id: res.data._id,
+      };
+      return { user: userData };
+    } else {
+      return { error: "User not authenticated" };
+    }
+  } catch (error) {
+    console.error("User verification failed:", error);
+    return { error: error.response?.data?.message || "User verification failed" };
+  }
+};
