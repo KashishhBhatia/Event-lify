@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children }) {
 
   if (isLoading) {
     // You can show a spinner here if you want:
-    return <div>Loading...</div>;
+    return <></>
     // or simply return null to render nothing until loading is done.
   }
 
