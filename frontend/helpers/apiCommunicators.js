@@ -44,11 +44,50 @@ export const logoutUser = async () => {
 };
 
 export const getEventDetailsAPI = async (id) => {
-  const response = await axios.get(`/api/event/${id}`, {
-    withCredentials: true, // include cookies if needed
-  });
-  return {
-    event: response.data.event,
-    liveCount: response.data.event.liveCount || 0,
-  };
+  try {
+    const response = await axios.get(`/api/event/${id}`, {
+      withCredentials: true,
+    });
+    return {
+      event: response.data.event,
+      liveCount: response.data.event.liveCount || 0,
+    };
+  } catch (error) {
+    console.error("Error fetching event details:", error);
+    return { error: "Failed to load event. Please try again later." };
+  }
 };
+
+export const registerForEvent = async (id) => {
+  try {
+    const response = await axios.put(
+      `https://event-lify-backend.onrender.com/api/event/${id}`,
+      {},
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Registration error:", error.response?.data || error.message);
+    return {
+      error: error.response?.data?.message ||
+        "Registration failed. Please try again.",
+    };
+  }
+};
+
+export const deregisterFromEvent = async (id) => {
+  try {
+    const response = await axios.delete(
+      `https://event-lify-backend.onrender.com/api/event/${id}/unregister`,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Deregistration error:", error.response?.data || error.message);
+    return {
+      error: error.response?.data?.message ||
+        "Deregistration failed. Please try again.",
+    };
+  }
+};
+
