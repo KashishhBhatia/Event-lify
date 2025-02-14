@@ -186,3 +186,30 @@ export const deleteEvent = async (req, res) => {
       return res.status(200).json({ message: "ERROR", cause: error.message });
     }
   };
+
+export const updateEvent = async (id, data) => {
+  try {
+    const response = await axios.patch(
+      `https://event-lify-backend.onrender.com/api/event/${id}`,
+      data,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating event:", error.response?.data || error.message);
+    return { error: error.response?.data?.message || "Event update failed. Please try again." };
+  }
+};
+
+export const deleteEvent = async (id) => {
+  try {
+    const response = await axios.delete(
+      `https://event-lify-backend.onrender.com/api/event/${id}`,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting event:", error.response?.data || error.message);
+    return { error: error.response?.data?.message || "Event deletion failed. Please try again." };
+  }
+};
