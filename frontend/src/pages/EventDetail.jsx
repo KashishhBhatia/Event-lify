@@ -24,9 +24,7 @@ export default function EventDetails() {
   const fetchEventDetails = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://event-lify-backend.onrender.com/api/event/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(`/api/event/${id}`);
       setEvent(response.data.event);
       setLiveCount(response.data.event.liveCount || 0);
     } catch (err) {
