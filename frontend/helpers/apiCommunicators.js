@@ -143,3 +143,20 @@ export const deleteEvent = async (id) => {
   }
 };
 
+export const getRegisteredEvents = async () => {
+  try {
+    const response = await axios.get(
+      "https://event-lify-backend.onrender.com/api/users/eventsRegistered",
+      { withCredentials: true }
+    );
+    if (response.data.message === "OK") {
+      return { events: response.data.events };
+    } else {
+      return { error: "Failed to fetch registered events." };
+    }
+  } catch (error) {
+    console.error("Error fetching registered events:", error);
+    return { error: "Error fetching registered events." };
+  }
+};
+
