@@ -4,9 +4,8 @@ import axios from "axios";
 export const signupUser = async (name, email, password) => {
   try {
     const response = await axios.post(
-      "https://event-lify-backend.onrender.com/api/users/signup",
+      "/api/users/signup",
       { name, email, password },
-      { withCredentials: true }
     );
     return response.data;
   } catch (error) {
@@ -18,9 +17,8 @@ export const signupUser = async (name, email, password) => {
 export const loginUser = async (email, password) => {
   try {
     const response = await axios.post(
-      "https://event-lify-backend.onrender.com/api/users/login",
+      "/api/users/login",
       { email, password },
-      { withCredentials: true }
     );
     return response.data;
   } catch (error) {
@@ -32,9 +30,8 @@ export const loginUser = async (email, password) => {
 export const logoutUser = async () => {
   try {
     const response = await axios.post(
-      "https://event-lify-backend.onrender.com/api/users/logout",
+      "/api/users/logout",
       {},
-      { withCredentials: true }
     );
     return response.data;
   } catch (error) {
@@ -45,9 +42,7 @@ export const logoutUser = async () => {
 
 export const getEventDetailsAPI = async (id) => {
   try {
-    const response = await axios.get(`/api/event/${id}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(`/api/event/${id}`);
     return {
       event: response.data.event,
       liveCount: response.data.event.liveCount || 0,
@@ -61,9 +56,8 @@ export const getEventDetailsAPI = async (id) => {
 export const registerForEvent = async (id) => {
   try {
     const response = await axios.put(
-      `https://event-lify-backend.onrender.com/api/event/${id}`,
+      `/api/event/${id}`,
       {},
-      { withCredentials: true }
     );
     return response.data;
   } catch (error) {
@@ -78,8 +72,7 @@ export const registerForEvent = async (id) => {
 export const deregisterFromEvent = async (id) => {
   try {
     const response = await axios.delete(
-      `https://event-lify-backend.onrender.com/api/event/${id}/unregister`,
-      { withCredentials: true }
+      `/api/event/${id}/unregister`,
     );
     return response.data;
   } catch (error) {
@@ -94,13 +87,12 @@ export const deregisterFromEvent = async (id) => {
 export const createEvent = async (data) => {
   try {
     const response = await axios.post(
-      "https://event-lify-backend.onrender.com/api/event/create",
+      "/api/event/create",
       data,
       {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        withCredentials: true,
       }
     );
     return response.data;
@@ -119,9 +111,8 @@ export const createEvent = async (data) => {
 export const updateEvent = async (id, data) => {
   try {
     const response = await axios.patch(
-      `https://event-lify-backend.onrender.com/api/event/${id}`,
+      `/api/event/${id}`,
       data,
-      { withCredentials: true }
     );
     return response.data;
   } catch (error) {
@@ -133,8 +124,8 @@ export const updateEvent = async (id, data) => {
 export const deleteEvent = async (id) => {
   try {
     const response = await axios.delete(
-      `https://event-lify-backend.onrender.com/api/event/${id}`,
-      { withCredentials: true }
+      `/api/event/${id}`,
+      
     );
     return response.data;
   } catch (error) {
@@ -146,8 +137,7 @@ export const deleteEvent = async (id) => {
 export const getRegisteredEvents = async () => {
   try {
     const response = await axios.get(
-      "https://event-lify-backend.onrender.com/api/users/eventsRegistered",
-      { withCredentials: true }
+      "/api/users/eventsRegistered",
     );
     if (response.data.message === "OK") {
       return { events: response.data.events };
@@ -163,8 +153,7 @@ export const getRegisteredEvents = async () => {
 export const getAllEvents = async () => {
   try {
     const response = await axios.get(
-      "https://event-lify-backend.onrender.com/api/event",
-      { withCredentials: true }
+      "/api/event",
     );
     // Assuming the backend responds with { events: [...] }
     return { events: response.data.events };
@@ -177,8 +166,7 @@ export const getAllEvents = async () => {
 export const verifyUserAPI = async () => {
   try {
     const res = await axios.get(
-      "https://event-lify-backend.onrender.com/api/users/auth-status",
-      { withCredentials: true }
+      "/api/users/auth-status",
     );
     if (res.data.message === "OK") {
       const userData = {
