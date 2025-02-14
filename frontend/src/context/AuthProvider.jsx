@@ -1,6 +1,7 @@
 // src/context/AuthProvider.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { verifyUserAPI } from "../../helpers/apiCommunicators";
 
 const AuthContext = createContext();
 
@@ -8,36 +9,26 @@ export function AuthProvider({ children }) {
   const [authUser, setAuthUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Optimistically load from localStorage (for a faster UI)
-    const storedUser = localStorage.getItem('authUser');
-    if (storedUser) {
-      setAuthUser(JSON.parse(storedUser));
+useEffect(() => {
+  // Optimistically load from localStorage (for a faster UI)
+  const storedUser = localStorage.getItem("authUser");
+  if (storedUser) {
+    setAuthUser(JSON.parse(storedUser));
+  }
+  // Always verify with the backend.
+  const verifyUser = async () => {
+    const result = await verifyUserAPI();
+    if (result.error) {
+      setAuthUser(null);
+      localStorage.removeItem("authUser");
+    } else {
+      setAuthUser(result.user);
+      localStorage.setItem("authUser", JSON.stringify(result.user));
     }
-    // Always verify with the backend.
-    const verifyUser = async () => {
-      try {
-        const res = await axios.get('https://event-lify-backend.onrender.com/api/users/auth-status', {
-          withCredentials: true,
-        });
-        if (res.data.message === "OK") {
-          const userData = { name: res.data.name, email: res.data.email, _id: res.data._id };
-          setAuthUser(userData);
-          localStorage.setItem('authUser', JSON.stringify(userData));
-        } else {
-          setAuthUser(null);
-          localStorage.removeItem('authUser');
-        }
-      } catch (error) {
-        console.error('User verification failed:', error);
-        setAuthUser(null);
-        localStorage.removeItem('authUser');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    verifyUser();
-  }, []);
+    setIsLoading(false);
+  };
+  verifyUser();
+}, []);
 
   useEffect(() => {
     if (authUser) {
