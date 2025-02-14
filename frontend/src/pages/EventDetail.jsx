@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Container, Typography, Box, Button, CircularProgress } from '@mui/material';
-import axios from 'axios';
 import { useAuth } from '../context/AuthProvider';
 import dayjs from 'dayjs';
 import socket from '../socket';
@@ -73,7 +72,7 @@ export default function EventDetails() {
     };
   }, [id]);
 
-  // Safely check if the user is registered.
+  // Check if the user is registered.
   const isRegistered =
     authUser &&
     event &&
@@ -81,7 +80,7 @@ export default function EventDetails() {
     event.registered_users.filter((regId) => regId != null)
       .some((regId) => String(regId) === String(authUser._id));
 
-  // Safely check if the user is the creator.
+  // Check if the user is the creator.
   const isCreator =
     authUser &&
     event &&
@@ -104,6 +103,7 @@ export default function EventDetails() {
     ? dayjs().isAfter(eventDateTime.add(1, 'hour'))
     : false;
 
+  // Instead of re-fetching the whole event, update the local event state.
   const handleRegister = async () => {
     if (!authUser) {
       navigate('/login', { replace: true });
@@ -115,7 +115,15 @@ export default function EventDetails() {
     if (result.error) {
       setRegisterError(result.error);
     } else if (result.message === "OK") {
-      await fetchEventDetails();
+      // Update local event state to include the user's id
+      setEvent(prevEvent => {
+        if (!prevEvent) return prevEvent;
+        // Avoid duplicates
+        if (!prevEvent.registered_users.some(u => String(u) === String(authUser._id))) {
+          return { ...prevEvent, registered_users: [...prevEvent.registered_users, authUser._id] };
+        }
+        return prevEvent;
+      });
     } else {
       setRegisterError(result.message);
     }
@@ -133,7 +141,14 @@ export default function EventDetails() {
     if (result.error) {
       setRegisterError(result.error);
     } else if (result.message === "OK") {
-      await fetchEventDetails();
+      // Update local event state to remove the user's id
+      setEvent(prevEvent => {
+        if (!prevEvent) return prevEvent;
+        return {
+          ...prevEvent,
+          registered_users: prevEvent.registered_users.filter(u => String(u) !== String(authUser._id))
+        };
+      });
     } else {
       setRegisterError(result.message);
     }
@@ -286,4 +301,5 @@ export default function EventDetails() {
     </>
   );
 }
+
 
