@@ -14,7 +14,7 @@ const sendMail = async (to, subject, text, html) => {
       service: 'gmail',
       auth: {
         type: 'OAuth2',
-        user: 'noreply@gmail.com',
+        user: 'abhisheknigam2101@gmail.com',
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
@@ -30,6 +30,7 @@ const sendMail = async (to, subject, text, html) => {
     };
 
     const result = await transporter.sendMail(mailOptions);
+    await oauth2Client.revokeCredentials();
     return result;
   } catch (error) {
     console.error('Error sending mail:', error);
