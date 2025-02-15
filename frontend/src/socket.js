@@ -1,5 +1,5 @@
 // src/socket.js
 import { io } from "socket.io-client";
 
-const socket = io("https://event-lify-backend.onrender.com", { withCredentials: true });
+const socket = io("http://localhost:3000", { withCredentials: true });
 export default socket;

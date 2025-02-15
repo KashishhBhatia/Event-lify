@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../helpers/apiCommunicators';
 import { useAuth } from '../context/AuthProvider';
 import Navbar from './Navbar';
+import { useGoogleLogin } from '@react-oauth/google'
+
 
 export default function Login() {
   const { setAuthUser } = useAuth();
@@ -21,7 +23,7 @@ export default function Login() {
       return;
     }
 
-    const res = await loginUser(email, password);
+    const res = await loginUser(email, password,null);
     if (res.error) {
       setError(res.error);
       return;
@@ -35,6 +37,31 @@ export default function Login() {
   const handleGuestLogin = () => {
     navigate("/events");
   };
+
+  const responseGoogle =  async (authResult) => {   
+    try {
+      if(authResult['code']){
+        const res = await loginUser(null, null, authResult['code']);
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
+        setAuthUser({ name: res.name, email: res.email, _id: res._id });
+        navigate("/my-events", { replace  : true });
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleGoogleLogin = useGoogleLogin(
+    {
+      onSuccess:responseGoogle,
+      onError:responseGoogle,
+      flow: 'auth-code',
+
+    }
+  )
 
   return (
     <>
@@ -93,6 +120,14 @@ export default function Login() {
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer"
             >
               Sign in
+            </button>
+          </div>
+
+          <div>
+            <button type='button' className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary cursor-pointer"
+            onClick={handleGoogleLogin}
+            >
+              Sign in with Google
             </button>
           </div>
 
