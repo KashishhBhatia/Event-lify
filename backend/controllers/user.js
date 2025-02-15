@@ -3,7 +3,7 @@ import TempUser from '../model/tempuser.model.js'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { COOKIE_NAME } from '../utils/constants.js';
-import { oauth2Client } from '../utils/googleConfig.js';
+import { oauth2Clientlogin } from '../utils/googleConfig.js';
 import axios from 'axios';
 import sendMail from '../utils/sendmail.js';
 
@@ -280,8 +280,8 @@ export const googleAuth = async (req, res) => {
     if (!code) {
       return res.status(400).send("Invalid request");
     }
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
+    const { tokens } = await oauth2Clientlogin.getToken(code);
+    oauth2Clientlogin.setCredentials(tokens);
 
     const { data } = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${tokens.access_token}`);
     const email = data.email;
