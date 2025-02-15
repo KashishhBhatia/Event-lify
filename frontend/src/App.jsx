@@ -11,8 +11,10 @@ import EventDetails from "./pages/EventDetail";
 import LiveEvent from "./pages/LiveEvent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EditEvent from "./pages/EditEvent";
+import { useAuth } from '../context/AuthProvider';
 
 function App() {
+  
   return (
     <main className="min-h-screen mx-auto">
       <Routes>
