@@ -14,7 +14,7 @@ import EditEvent from "./pages/EditEvent";
 import { useAuth } from '../context/AuthProvider';
 
 function App() {
-  
+  const { authUser, isLoading } = useAuth();
   return (
     <main className="min-h-screen mx-auto">
       <Routes>
@@ -53,8 +53,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+       <Route path="/signup" element={!authUser ? <Signup /> : <Home />} />
+        <Route path="/signup" element={!authUser ? <Login /> : <Home />} />
       </Routes>
     </main>
   );
