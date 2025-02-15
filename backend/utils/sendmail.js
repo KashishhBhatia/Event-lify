@@ -22,7 +22,7 @@ const sendMail = async (to, subject, text, html) => {
       },
     });
     const mailOptions = {
-      from: <noreply>@gmail.com,
+      from: '<noreply>@gmail.com',
       to,
       subject,
       text,
