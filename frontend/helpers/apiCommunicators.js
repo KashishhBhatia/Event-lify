@@ -1,7 +1,7 @@
 // src/helpers/apiCommunicators.js
 import axios from "axios";
 
-export const signupUser = async (name, email, password) => {
+export const signupUser = async (name, email, password,code) => {
   try {
     const response = await axios.post(
       "/api/users/signup",
@@ -14,16 +14,35 @@ export const signupUser = async (name, email, password) => {
   }
 };
 
-export const loginUser = async (email, password) => {
+export const verifyOtp = async (email, otp) => {
   try {
+    // Sends the OTP and email for verification
+    const response = await axios.post("/api/users/verify-otp", { email, otp });
+    return response.data;
+  } catch (error) {
+    console.error("OTP Verification error:", error.response?.data || error.message);
+    return { error: error.response?.data?.message || "OTP verification failed" };
+  }
+};
+
+export const loginUser = async (email, password,code) => {
+  try {
+    if(code){
+      const response = await axios.get( `/api/users/auth/google?code=${code}`);
+      console.log(response)
+      return response.data;
+    }
+    else{
     const response = await axios.post(
       "/api/users/login",
       { email, password },
     );
     return response.data;
+    }
   } catch (error) {
+    console.log(error.response.data)
     console.error("Login error:", error.response?.data || error.message);
-    return { error: error.response?.data?.message || "Login failed" };
+    return { error: error.response?.data || "Login failed" };
   }
 };
 

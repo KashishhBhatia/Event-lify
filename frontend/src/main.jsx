@@ -4,14 +4,17 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider.jsx";
 import App from './App.jsx';
 import axios from "axios";
+import GoogleAuthProviderWrapper from './context/GoogleAuthProviderWrapper.jsx';
 
-axios.defaults.baseURL = "https://event-lify-backend.onrender.com" ;
+axios.defaults.baseURL = "http://localhost:3000" ;
 axios.defaults.withCredentials = true;
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
+    <GoogleAuthProviderWrapper>
     <AuthProvider>
       <App />
     </AuthProvider>
+    </GoogleAuthProviderWrapper>
   </BrowserRouter>
 );
