@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { COOKIE_NAME } from '../utils/constants.js';
 import { oauth2Client } from '../utils/googleConfig.js';
 import axios from 'axios';
+import sendMail from '../utils/sendmail.js';
 
 export const signup = async (req, res) => {
   try {
@@ -30,6 +31,19 @@ export const signup = async (req, res) => {
       tempUser = new TempUser({ name, email, password: hashedPassword, otp, otpExpiry });
       await tempUser.save();
     }
+
+    // Send the OTP to the email
+
+    const to= email;
+    const subject= "OTP for Email Verification";
+    const text= `Your OTP is ${otp}. It is valid for 10 minutes.`;
+    const html= `<p>Your OTP is <strong>${otp}</strong>. It is valid for 10 minutes.</p>`;
+
+    const result = await sendMail(to, subject, text, html);
+    if (result.error) {
+      return res.status(500).json({ message: "ERROR ", cause: result.error });
+    }
+    console.log(result.response);
     console.log(`OTP for ${email}: ${otp}`);
 
     return res.status(200).json({ message: "OTP sent to your email. Please verify." });
