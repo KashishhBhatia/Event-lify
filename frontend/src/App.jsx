@@ -11,7 +11,7 @@ import EventDetails from "./pages/EventDetail";
 import LiveEvent from "./pages/LiveEvent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EditEvent from "./pages/EditEvent";
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from './context/AuthProvider';
 
 function App() {
   const { authUser, isLoading } = useAuth();
