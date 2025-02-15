@@ -319,7 +319,7 @@ export const googleAuth = async (req, res) => {
     console.log(error);
     return res
       .status(500)
-      .json({ message: "ERROR", cause: error.message });
+      .json({ message: "ERROR from here", cause: error.message });
   }
 };
 
