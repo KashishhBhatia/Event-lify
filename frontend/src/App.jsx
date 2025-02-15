@@ -54,7 +54,7 @@ function App() {
           }
         />
        <Route path="/signup" element={!authUser ? <Signup /> : <Home />} />
-        <Route path="/signup" element={!authUser ? <Login /> : <Home />} />
+        <Route path="/login" element={!authUser ? <Login /> : <Home />} />
       </Routes>
     </main>
   );
