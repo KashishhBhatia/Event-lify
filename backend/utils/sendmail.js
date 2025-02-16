@@ -31,7 +31,6 @@ const sendMail = async (to, subject, text, html) => {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    await oauth2Client.revokeCredentials();
     return result;
   } catch (error) {
     console.error('Error sending mail:', error);
