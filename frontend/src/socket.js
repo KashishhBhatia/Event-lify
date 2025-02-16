@@ -1,5 +1,5 @@
 // src/socket.js
 import { io } from "socket.io-client";
 
-const socket = io("https://event-lify-backend.onrender.com", { withCredentials: true });
+const socket = io(import.meta.env.VITE_API_BASE_URL, { withCredentials: true });
 export default socket;
