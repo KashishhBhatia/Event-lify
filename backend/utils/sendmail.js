@@ -10,6 +10,7 @@ const sendMail = async (to, subject, text, html) => {
     oauth2Client.setCredentials({ refresh_token: refreshToken });
     const accessTokenResponse = await oauth2Client.getAccessToken();
     const accessToken = accessTokenResponse.token;
+    console.log(accessToken);
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
