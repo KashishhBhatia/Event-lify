@@ -151,16 +151,6 @@ The project is divided into two main directories: `backend` and `frontend`.
 - `DELETE /api/event/:id` - Delete an event
 - `DELETE /api/event/:id/unregister` - Unregister a user from an event
 
-## Screenshots
-
-### Home Page
-![Home Page](frontend/public/homepage.png)
-
-### Event Details
-![Event Details](frontend/public/eventdetails.png)
-
-### Create Event
-![Create Event](frontend/public/createevent.png)
 
 ## Contributing
 
